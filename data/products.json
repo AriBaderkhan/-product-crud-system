@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop",
+    "quantity": 17,
+    "price": "$500",
+    "Description": "Lenovo"
+  },
+  {
+    "id": 2,
+    "name": "Iphone",
+    "quantity": 35,
+    "price": "$1000",
+    "Description": "Iphone 16 Pro Max"
+  },
+  {
+    "id": 3,
+    "name": "Iphone",
+    "quantity": 10,
+    "price": "$800",
+    "Description": "Iphone 15 Plus"
+  },
+  {
+    "id": 4,
+    "name": "Laptop",
+    "quantity": 13,
+    "price": "$1500",
+    "Description": "Dell"
+  }
+]
