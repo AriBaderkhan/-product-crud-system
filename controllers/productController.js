@@ -1,16 +1,9 @@
-const express = require("express");
-const app = express();
-const morgan = require("morgan");
+const { createProduct, getAllProduct, updateProduct, getProduct, deleteProduct } = require('../models/productModel')
+const { emitter } = require('../logger_system');
 
-const { emitter, logMorgan } = require("./logger_system");
-const { createProduct, getAllProduct, updateProduct, getProduct, deleteProduct } = require('./models/productModel')
-app.use(morgan("combined", { stream: logMorgan }));
 
-const PORT = 1234;
-app.use(express.json());
-
-app.post("/add", (req, res) => {
-    const { name, price, quantity, description } = req.body.name;
+const addProduct = (req, res) => {
+    const { name, price, quantity, description } = req.body;
 
     const date = new Date().toLocaleString();
 
@@ -18,15 +11,16 @@ app.post("/add", (req, res) => {
         emitter.emit("logs", `User didn't fill the name/price field at ${date}`);
         return res.status(400).send("❌ 'name' and 'price' are required fields");
     }
+    
 
     createProduct(name, price, quantity, description, (err, result) => {
         if (err) return res.status(500).send("Server Error");
         res.status(200).send("Product Adeed Successfully");
         emitter.emit("logs", `Product Adeed Successfully at ${date}`);
     })
-});
+};
 
-app.get("/showall", (req, res) => {
+const showAllProduct = (req, res) => {
 
     getAllProduct((err, result) => {
         if (err) return res.status(500).send("Server Error");
@@ -37,9 +31,9 @@ app.get("/showall", (req, res) => {
         const date = new Date().toLocaleString();
         emitter.emit("logs", `User Saw all Products at ${date}`);
     })
-});
+}
 
-app.get("/show/:id", (req, res) => {
+const showAProduct = (req, res) => {
     const id = Number(req.params.id);
     const date = new Date().toLocaleString();
 
@@ -53,9 +47,9 @@ app.get("/show/:id", (req, res) => {
         }
 
     })
-});
+}
 
-app.put("/update/:id", (req, res) => {
+const updateTheProduct = (req, res) => {
     const id = Number(req.params.id);
     const updates = req.body
     const date = new Date().toLocaleString();
@@ -69,9 +63,9 @@ app.put("/update/:id", (req, res) => {
             emitter.emit("logs", `User Updated Product with id ${id} at ${date}`);
         }
     })
-});
+}
 
-app.delete("/delete/:id", (req, res) => {
+const deleteTheProduct = (req, res) => {
     const id = Number(req.params.id);
     const date = new Date().toLocaleString();
 
@@ -84,29 +78,6 @@ app.delete("/delete/:id", (req, res) => {
             emitter.emit("logs", `User Deleted Product with id ${id} at ${date}`);
         }
     })
-});
+}
 
-app.use((req, res) => {
-    res.status(404).send("Oops.. Something went wrong!");
-    const date = new Date().toLocaleString();
-    emitter.emit(
-        "logs",
-        `User trying something but faceed Not Found 404 at ${date}`
-    );
-});
-
-app.use((err, req, res, next) => {
-    console.log(err.stack);
-    res
-        .status(500)
-        .send("Server Error: Please check the backend logs for more info.");
-    const date = new Date().toLocaleString();
-    emitter.emit(
-        "logs",
-        `Server Error: Please check the backend logs for more info. at ${date}`
-    );
-});
-
-app.listen(PORT, () => {
-    console.log(`Server Runing on Port ${PORT}`);
-});
+module.exports = {addProduct , showAllProduct , showAProduct , updateTheProduct , deleteTheProduct}

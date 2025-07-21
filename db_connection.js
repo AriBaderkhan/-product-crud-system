@@ -10,7 +10,7 @@ const pool = new Pool({
 })
 
 pool.connect()
-.then(()=>console.log("connect bu"))
+.then(()=>console.log("Connected"))
 .catch(err=> console.log(err.stack))
 
 

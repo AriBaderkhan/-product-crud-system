@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const emitEvent = require('events');
-const emitter = new emitEvent();
+const EventEmitter  = require('events');
+const emitter = new EventEmitter();
 
 const folderPath = path.join(__dirname,'logs_folder');
 
