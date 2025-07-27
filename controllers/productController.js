@@ -4,14 +4,7 @@ const { emitter } = require('../logger_system');
 
 const addProduct = (req, res) => {
     const { name, price, quantity, description } = req.body;
-
     const date = new Date().toLocaleString();
-
-    if (!name || !price) {
-        emitter.emit("logs", `User didn't fill the name/price field at ${date}`);
-        return res.status(400).send("❌ 'name' and 'price' are required fields");
-    }
-    
 
     createProduct(name, price, quantity, description, (err, result) => {
         if (err) return res.status(500).send("Server Error");
@@ -54,14 +47,24 @@ const updateTheProduct = (req, res) => {
     const updates = req.body
     const date = new Date().toLocaleString();
 
-    updateProduct(id, updates, (err, result) => {
+    getProduct(id, async (error, result) => {
+        if (error) return res.status(500).send("Server Error");
+
         if (result.rows.length === 0) {
-            res.status(404).send(`Product with id ${id} Not Found`);
-            emitter.emit("logs", `User tried to update product with id ${id} but not found at ${date}`);
-        } else {
+            emitter.emit("logs", `User tried to see the user with id ${id} but not found at ${date}`);
+            return res.status(404).send(`User with id ${id} Not Found`);
+        }
+        if (Object.keys(updates).length === 0) {
+            return res.status(200).send(`nothing updated with id ${id}`)
+        }
+
+        updateProduct(id, updates, (error, respond) => {
+            if (error) return res.status(500).send("Server Error");
+
             res.status(200).send(`Product id ${id} Updated successfully`);
             emitter.emit("logs", `User Updated Product with id ${id} at ${date}`);
-        }
+
+        })
     })
 }
 
@@ -80,4 +83,4 @@ const deleteTheProduct = (req, res) => {
     })
 }
 
-module.exports = {addProduct , showAllProduct , showAProduct , updateTheProduct , deleteTheProduct}
+module.exports = { addProduct, showAllProduct, showAProduct, updateTheProduct, deleteTheProduct }

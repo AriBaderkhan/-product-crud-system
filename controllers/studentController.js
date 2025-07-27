@@ -6,11 +6,6 @@ const { emitter } = require("../logger_system");
 const createUser = async (req, res) => {
     const { username, email, password, age } = req.body;
     const date = new Date().toLocaleString();
-    
-    if (!username || !email || !password) {
-        emitter.emit("logs", `User didn't fill the username/email/password field at ${date}`);
-        return res.status(400).send("All fields are required expect age");
-    }
 
     try {
         const saltRounds = 10;
@@ -30,7 +25,7 @@ const createUser = async (req, res) => {
     } catch (error) {
         res.status(500).send("Hashing failed");
     }
-};
+}
 
 const getAllUsers = (req, res) => {
     const date = new Date().toLocaleString();
@@ -82,6 +77,17 @@ const updatingUser = async (req, res) => {
     const updatedDetail = req.body;
     const date = new Date().toLocaleString();
 
+
+    showAUser(id, async (error, result) => {
+        if (error) return res.status(500).send("Server Error");
+
+        if (result.rows.length === 0) {
+            emitter.emit("logs", `User tried to see the user with id ${id} but not found at ${date}`);
+            return res.status(404).send(`User with id ${id} Not Found`);
+        }
+        if (Object.keys(updatedDetail).length === 0) {
+        return res.status(200).send(`nothing updated with id ${id}`)
+    }
     if (updatedDetail.password) {
         const setRounds = 10;
         updatedDetail.password = await bcrypt.hash(updatedDetail.password, setRounds);
@@ -95,14 +101,13 @@ const updatingUser = async (req, res) => {
             }
             return res.status(500).send("Server error");
         }
-        if (respond.rows.length === 0) {
-            res.status(404).send(`User tried to Update user with id ${id} but Not Found`);
-            emitter.emit("logs", `User tried to Update user with id ${id} but Not Found at ${date}`);
-        } else {
-            res.status(200).send(`User with id ${id} Updated successfully`);
-            emitter.emit("logs", `User with id ${id} Updated successfully at ${date}`);
-        }
+
+        res.status(200).send(`User with id ${id} Updated successfully`);
+        emitter.emit("logs", `User with id ${id} Updated successfully at ${date}`);
+
     });
+    });
+    
 };
 
 module.exports = { createUser, getAllUsers, getUserById, deleteUserById, updatingUser, };
