@@ -29,12 +29,12 @@ const authControllerLogin = async (req, res) => {
         if (err) return res.status(500).send("DB Error");
 
         if (respond.rows.length === 0) {
-            return res.status(400).send("user not found");
+            return res.status(400).send("user not found"); // if user not exsit in DB the email
         }
 
-        const hashedPassword = respond.rows[0].password;
-        const isMatch = await bcrypt.compare(password,hashedPassword);
-        if (!isMatch) return res.status(400).send("Incorrect password");
+        const hashedPassword = respond.rows[0].password; // get the password from DB
+        const isMatch = await bcrypt.compare(password,hashedPassword); // for comparing password if match or not by async/await
+        if (!isMatch) return res.status(400).send("Incorrect password"); 
          const token = jwt.sign(
                 {
                     userId: respond.rows[0].id,

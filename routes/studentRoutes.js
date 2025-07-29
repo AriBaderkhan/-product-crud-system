@@ -6,7 +6,7 @@ const verifyToken = require('../middlewares/authMiddleware')
 
 
 router.post('/add', validateStudentAdd , createUser);
-router.get('/showall',verifyToken, getAllUsers);
+router.get('/showall',verifyToken, getAllUsers); // authMiddleware is used for protectiong path
 router.get('/show/:id', getUserById);
 router.delete('/delete/:id', deleteUserById);
 router.put('/update/:id',validateStudentUpdate, updatingUser);
