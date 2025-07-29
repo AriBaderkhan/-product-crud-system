@@ -4,6 +4,7 @@ const morgan = require("morgan");
 
 const productRoutes = require('./routes/productRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const { emitter, logMorgan } = require("./logger_system");
 app.use(morgan("combined", { stream: logMorgan }));
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use('/products',productRoutes); // the core for product
 app.use('/students',studentRoutes); // the core for student
+app.use('/auth',authRoutes); // the core for user register/login
 
 app.use((req, res) => {
     res.status(404).send("Oops.. Something went wrong!");
